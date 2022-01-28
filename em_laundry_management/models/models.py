@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import datetime
+import time
 from lxml import etree
 from odoo import models, fields, api
+from odoo.tools.misc import DEFAULT_SERVER_DATETIME_FORMAT
 
 
 class WashType(models.Model):
@@ -41,15 +43,27 @@ class Washings(models.Model):
     laundry_track_code = fields.Char('Tracking Code')
     is_make_over = fields.Boolean('Make Over')
     is_make_over_text = fields.Char()
+    start_times = fields.Float("Start Time", digits=(12, 2))
+    end_times = fields.Float("End Time", digits=(12, 2))
+
+    def get_time_float(self):
+        datetimenow = datetime.datetime.now().time()
+        time_float = datetimenow.hour + datetimenow.minute / 60.0
+        return time_float
 
     def start_wash(self):
         self.washing_states = 'process'
+        time_float = self.get_time_float()
+        self.start_times = time_float
         if not self.is_make_over:
             self.order_line_id.state_per_washing = 'wash'
+
 
     def finish_wash(self):
         self.washing_states = 'done'
         line = self.order_line_id
+        time_float = self.get_time_float()
+        self.end_times = time_float
 
         if line.other_than_wash_ids:
             obj_ids = self.env['em.laundry.mgt.washings'].search(
