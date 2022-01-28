@@ -2,6 +2,7 @@
 
 import datetime
 import time
+import pytz
 from lxml import etree
 from odoo import models, fields, api
 from odoo.tools.misc import DEFAULT_SERVER_DATETIME_FORMAT
@@ -47,8 +48,13 @@ class Washings(models.Model):
     end_times = fields.Float("End Time", digits=(12, 2))
 
     def get_time_float(self):
-        datetimenow = datetime.datetime.now().time()
-        time_float = datetimenow.hour + datetimenow.minute / 60.0
+        # datetimenow = datetime.datetime.now().time()
+        datetimenow = datetime.datetime.now()
+        timezone = pytz.timezone(self._context.get('tz') or 'UTC')
+        # event_date = pytz.UTC.localize(datetime.datetime.now().replace(microsecond=0))
+        event_date = pytz.UTC.localize(datetimenow.replace(microsecond=0))
+        time_hr = event_date.astimezone(timezone).replace(tzinfo=None).time()
+        time_float = time_hr.hour + time_hr.minute / 60.0
         return time_float
 
     def start_wash(self):
