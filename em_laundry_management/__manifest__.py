@@ -7,7 +7,7 @@
     """,
     'author': 'ErpMstar Solutions',
     'category': 'Sales',
-    'version': '1.1',
+    'version': '1.0',
     'depends': ['sale'],
     # always loaded
     'data': [
