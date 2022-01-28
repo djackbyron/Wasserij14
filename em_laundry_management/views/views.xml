@@ -1,0 +1,421 @@
+<odoo>
+    <data>
+        <!-- explicit list view definition -->
+
+        <record id="em_laundry_management.wash_type_list" model="ir.ui.view">
+            <field name="name">em_laundry_management_wash_type_list</field>
+            <field name="model">em.laundry.mgt.wash.type</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="washing_charge"/>
+                    <field name="responsible_person"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="em_laundry_management.other_than_wash_list" model="ir.ui.view">
+            <field name="name">em_laundry_management_other_than_wash_list</field>
+            <field name="model">em.laundry.other.than.wash</field>
+            <field name="arch" type="xml">
+                <tree>
+                    <field name="name"/>
+                    <field name="work_charge"/>
+                    <field name="responsible_person"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="em_laundry_management.washing_list_view" model="ir.ui.view">
+            <field name="name">em_laundry_management_washing_list_view</field>
+            <field name="model">em.laundry.mgt.washings</field>
+            <field name="arch" type="xml">
+                <tree create="false" delete="false">
+                    <field name="order_id"/>
+                    <field name="name"/>
+                    <field name="responsible_person"/>
+                    <field name="washing_states"/>
+                </tree>
+            </field>
+        </record>
+
+        <!--        Form views-->
+
+        <record id="em_laundry_management.wash_types_form" model="ir.ui.view">
+            <field name="name">em_laundry_management_wash_types_form</field>
+            <field name="model">em.laundry.mgt.wash.type</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required="1"/>
+                                <field name="washing_charge" required="1"/>
+                            </group>
+                            <group>
+                                <field name="responsible_person" required="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="em_laundry_management.other_than_wash_form" model="ir.ui.view">
+            <field name="name">em_laundry_management_other_than_wash_form</field>
+            <field name="model">em.laundry.other.than.wash</field>
+            <field name="arch" type="xml">
+                <form>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name" required="1"/>
+                                <field name="work_charge" required="1"/>
+                            </group>
+                            <group>
+                                <field name="responsible_person" required="1"/>
+                            </group>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="em_laundry_management.washing_form" model="ir.ui.view">
+            <field name="name">em_laundry_management_washing_form</field>
+            <field name="model">em.laundry.mgt.washings</field>
+            <field name="arch" type="xml">
+                <form create="false">
+                    <header>
+                        <button class="oe_highlight" name="start_wash" string="Start" type="object"
+                                attrs="{'invisible': [('washing_states', 'not in', ['draft'])]}"/>
+                        <button class="oe_highlight" name="finish_wash" string="Finish" type="object"
+                                attrs="{'invisible': [('washing_states', 'not in', ['process'])]}"/>
+                        <button class="oe_highlight" name="cancel_wash" string="Cancel" type="object"
+                                attrs="{'invisible': [('washing_states', 'in', ['process', 'done'])]}"/>
+                        <field name="washing_states" widget="statusbar" statusbar_visible="draft,process,done"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <group>
+                                <field name="name"/>
+                                <field name="responsible_person"/>
+                                <field name="date_time"/>
+                                <field name="is_make_over_text" invisible="1"/>
+                            </group>
+                            <group>
+                                <field name="cloth"/>
+                                <field name="cloth_count"/>
+                                <field name="order_id"/>
+                                <field name="laundry_track_code"/>
+                                <field name="order_line_id" invisible="1"/>
+                            </group>
+                        </group>
+                        <group>
+                            <field name="description"/>
+                        </group>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+
+        <record id="view_laundry_sale_order_filter" model="ir.ui.view">
+            <field name="name">laundry.sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//search/group/filter[@name='order_month']" position="after">
+                    <filter string="State" name="state" domain="[]" context="{'group_by': 'state'}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_sale_order_form" model="ir.ui.view">
+            <field name="name">sale.order.form.inherit</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="is_laundry_order" invisible="1"/>
+                    <field name="responsible_person"
+                           attrs="{'invisible': [('is_laundry_order', '=', False)], 'required': [('is_laundry_order', '=', True)]}"/>
+                    <field name="all_done" invisible="1"/>
+                </xpath>
+                <xpath expr="//sheet/div[hasclass('oe_button_box')]" position="inside">
+                    <button class="oe_stat_button" name="washings_list" type="object"
+                            icon="fa-cogs"
+                            attrs="{'invisible': ['|', ('state', 'in', ['draft','order']), ('is_laundry_order', '=', False)]}">
+                        <field string="Works" name="washing_count" widget="statinfo"/>
+                    </button>
+                </xpath>
+
+                <xpath expr="//notebook/page[@name='other_information']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('is_laundry_order','=',True)]}</attribute>
+                </xpath>
+                <xpath expr="//notebook/page[@name='customer_signature']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('is_laundry_order','=',True)]}</attribute>
+                </xpath>
+
+                <xpath expr="//header/button[3]" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('is_laundry_order','=',True), ('invoice_status', '!=',
+                        'to invoice')]}
+                    </attribute>
+                </xpath>
+
+                <xpath expr="//header/button[last()]" position="after">
+                    <button name="set_to_process"
+                            string="Send for Wash"
+                            class="oe_highlight"
+                            type="object"
+                            attrs="{'invisible': [('state', 'not in', ['order'])]}"/>
+                    <button name="action_confirm"
+                            string="Set for Invoice"
+                            class="oe_highlight"
+                            type="object"
+                            attrs="{'invisible': ['|',('all_done', '=', False),('state', 'not in', ['process'])]}"/>
+                    <button name="generate_invoice"
+                            string="Create Invoice"
+                            class="oe_highlight"
+                            type="object"
+                            attrs="{'invisible': ['|','|',('all_done', '=', False),('state', 'not in', ['sale']),('invoice_status', '!=', 'to invoice')]}"/>
+                    <button name="return_laundry"
+                            string="Return"
+                            class="oe_highlight"
+                            type="object"
+                            attrs="{'invisible': [('state', 'not in', ['complete'])]}"/>
+                    <button name="print_tracking_code"
+                            string="Print Tracking Code Tags"
+                            class="oe_highlight"
+                            type="object"
+                            icon="fa-print"
+                            attrs="{'invisible': ['|',('is_laundry_order', '=', False), ('state','in',['draft'])]}"/>
+                </xpath>
+
+                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='name']"
+                       position="after">
+                    <field name="laundry_track_code"
+                           attrs="{'column_invisible': ['|',('parent.is_laundry_order', '=', False), ('parent.state','in',['draft'])], 'required': [('parent.is_laundry_order', '=', True)]}"/>
+                    <field name="dress_count_in"
+                           attrs="{'column_invisible': [('parent.is_laundry_order', '=', False)], 'required': [('parent.is_laundry_order', '=', True)]}"/>
+                    <field name="dress_count_out"
+                           attrs="{'column_invisible': [('parent.state', 'not in', ['complete', 'return'])]}"/>
+                    <field name="wash_type_id"
+                           attrs="{'column_invisible': [('parent.is_laundry_order', '=', False)], 'required': [('parent.is_laundry_order', '=', True)]}"/>
+                    <field name="other_than_wash_ids" widget="many2many_tags"
+                           attrs="{'column_invisible': [('parent.is_laundry_order', '=', False)]}"/>
+                    <field name="state_per_washing"
+                           attrs="{'column_invisible': [('parent.is_laundry_order', '=', False)]}"/>
+                </xpath>
+                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='product_uom_qty']"
+                       position="attributes">
+                    <attribute name="attrs">{'column_invisible': [('parent.is_laundry_order','=',True)]}</attribute>
+                </xpath>
+                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='qty_delivered']"
+                       position="attributes">
+                    <attribute name="attrs">{'column_invisible': ['|', ('parent.is_laundry_order','=',True),
+                        ('parent.state', 'not in', ['sale', 'done'])]}
+                    </attribute>
+                </xpath>
+                <xpath expr="//page[@name='order_lines']/field[@name='order_line']/tree/field[@name='qty_invoiced']"
+                       position="attributes">
+                    <attribute name="attrs">{'column_invisible': ['|', ('parent.is_laundry_order','=',True),
+                        ('parent.state', 'not in', ['sale', 'done'])]}
+                    </attribute>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_laundry_product_product_form" model="ir.ui.view">
+            <field name="name">em_laundry.product.product.form.inherit</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@name='options']" position="inside">
+                    <field name="is_wash_type_clothe" invisible="1"/>
+                    <br/>
+                </xpath>
+                <notebook>
+                    <page string="Charges" attrs="{'invisible': [('is_wash_type_clothe','=',False)]}"
+                          autofocus="autofocus">
+                        <group string="Laundry Work Charges">
+                            <group>
+                                <field name="washing_charge_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="wash_work_id" required="1"/>
+                                        <field name="price" required="1"/>
+                                        <field name="product_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </group>
+                            <group>
+                                <field name="other_charge_ids" nolabel="1">
+                                    <tree editable="bottom">
+                                        <field name="other_work_id" required="1"/>
+                                        <field name="price" required="1"/>
+                                        <field name="product_id" invisible="1"/>
+                                    </tree>
+                                </field>
+                            </group>
+                        </group>
+                    </page>
+                </notebook>
+            </field>
+        </record>
+
+        <record id="view_account_move_form" model="ir.ui.view">
+            <field name="name">account.move.form.inherit</field>
+            <field name="model">account.move</field>
+            <field name="inherit_id" ref="account.view_move_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="is_laundry_invoice" invisible="1"/>
+                </xpath>
+                <xpath expr="//page[@id='invoice_tab']/field[@name='invoice_line_ids']/tree/field[@name='name']"
+                       position="after">
+                    <field name="wash_type_id"
+                           attrs="{'column_invisible': [('parent.is_laundry_invoice', '=', False)]}"/>
+                    <field name="other_than_wash_ids" widget="many2many_tags"
+                           attrs="{'column_invisible': [('parent.is_laundry_invoice', '=', False)]}"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_washing_filter" model="ir.ui.view">
+            <field name="name">laundry.washing.search</field>
+            <field name="model">em.laundry.mgt.washings</field>
+            <field name="arch" type="xml">
+                <search string="Washings">
+                    <group expand="0" string="Group By">
+                        <filter string="Orders" name="order" domain="[]" context="{'group_by': 'order_id'}"/>
+                        <filter string="Status" name="status" domain="[]" context="{'group_by': 'washing_states'}"/>
+                        <filter string="Work" name="work" domain="[]" context="{'group_by': 'is_make_over_text'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <record id="view_order_product_pivot" model="ir.ui.view">
+            <field name="name">sale.report.pivot</field>
+            <field name="model">em.laundry.mgt.reporting</field>
+            <field name="arch" type="xml">
+                <pivot string="Sales Analysis" disable_linking="True">
+                    <field name="date" interval="month" type="row"/>
+                    <field name="price_subtotal" type="measure"/>
+                </pivot>
+            </field>
+        </record>
+
+        <record id="view_order_product_graph" model="ir.ui.view">
+            <field name="name">sale.report.graph</field>
+            <field name="model">em.laundry.mgt.reporting</field>
+            <field name="arch" type="xml">
+                <graph string="Sales Analysis" type="line">
+                    <field name="date" type="row" interval="day"/>
+                    <field name="price_subtotal" type="measure"/>
+                </graph>
+            </field>
+        </record>
+
+        <!-- actions opening views on models -->
+
+        <record model="ir.actions.act_window" id="em_laundry_management.action_window_wash_type">
+            <field name="name">Wash Types</field>
+            <field name="res_model">em.laundry.mgt.wash.type</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="em_laundry_management.action_window_wash">
+            <field name="name">Washes</field>
+            <field name="res_model">sale.order</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{'default_is_laundry_order':True, 'search_default_state': True}</field>
+            <field name="domain">[('is_laundry_order','=',True)]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Laundry Order, the first step of a wash!
+                </p>
+                <p>
+                    Once the Laundry Order is confirmed, it creates washing works.
+                    <br/>
+                    You will be able to perform those washings then invoice and collect the payment.
+                </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="em_laundry_management.action_window_other_than_wash">
+            <field name="name">Other Than Wash</field>
+            <field name="res_model">em.laundry.other.than.wash</field>
+            <field name="view_mode">tree,form</field>
+        </record>
+
+        <record model="ir.actions.act_window" id="em_laundry_management.action_window_cloths">
+            <field name="name">Clothes</field>
+            <field name="res_model">product.product</field>
+            <field name="view_mode">kanban,tree,form</field>
+            <field name="context">{'default_type': 'service', 'default_is_wash_type_clothe': True}</field>
+            <field name="domain">[('is_wash_type_clothe','=', True)]</field>
+            <field name="help" type="html">
+                <p class="o_view_nocontent_smiling_face">
+                    Create a new Wash Type Cloth!
+                </p>
+                <p>
+                    Once a Cloth is created, you can set different washing types and there charges for the cloth.
+                </p>
+            </field>
+        </record>
+
+        <record model="ir.actions.act_window" id="em_laundry_management.action_window_washing">
+            <field name="name">Washings</field>
+            <field name="res_model">em.laundry.mgt.washings</field>
+            <field name="view_mode">tree,form</field>
+            <field name="context">{'search_default_order': True, 'search_default_work': True}</field>
+        </record>
+
+        <record id="em_laundry_management.action_order_report_all" model="ir.actions.act_window">
+            <field name="name">Laundry Analysis</field>
+            <field name="res_model">em.laundry.mgt.reporting</field>
+            <field name="view_mode">graph,pivot</field>
+            <field name="view_id"/>
+            <field name="help">This report performs analysis on your quotations and sales orders. Analysis check your
+                sales revenues and sort it by different group criteria (salesman, partner, product, etc.) Use this
+                report to perform analysis on sales not having invoiced yet. If you want to analyse your turnover, you
+                should use the Invoice Analysis report in the Accounting application.
+            </field>
+        </record>
+
+        <!-- Top menu item -->
+
+        <menuitem name="Laundry" id="em_laundry_management.menu_root"/>
+
+        <!-- menu categories -->
+
+        <menuitem name="Configuration" id="em_laundry_management.menu_1" parent="em_laundry_management.menu_root"
+                  sequence="55"/>
+        <menuitem name="Wash" id="em_laundry_management.menu_2" parent="em_laundry_management.menu_root"/>
+        <menuitem name="Washings" id="em_laundry_management.menu_3" parent="em_laundry_management.menu_root"/>
+        <menuitem name="Laundry Work" id="em_laundry_management.menu_4" parent="em_laundry_management.menu_1"/>
+        <menuitem id="menu_laundry_report" name="Reporting" parent="em_laundry_management.menu_root"/>
+        <menuitem id="menu_laundry_cloth_wash_type" name="Clothe Type" parent="em_laundry_management.menu_root"/>
+
+        <!-- actions -->
+
+        <menuitem name="Laundry Wash" id="em_laundry_management.menu_wash" parent="em_laundry_management.menu_2"
+                  action="em_laundry_management.action_window_wash"/>
+        <menuitem name="Wash Type" id="em_laundry_management.menu_wash_type" parent="em_laundry_management.menu_4"
+                  action="em_laundry_management.action_window_wash_type"/>
+        <menuitem name="Other Than Wash" id="em_laundry_management.menu_other_than_wash"
+                  parent="em_laundry_management.menu_4"
+                  action="em_laundry_management.action_window_other_than_wash"/>
+        <menuitem name="All Washings" id="em_laundry_management.menu_washings"
+                  parent="em_laundry_management.menu_3"
+                  action="em_laundry_management.action_window_washing"/>
+        <menuitem name="Washing Clothes Type" id="em_laundry_management.menu_cloths"
+                  parent="em_laundry_management.menu_laundry_cloth_wash_type"
+                  action="em_laundry_management.action_window_cloths"/>
+        <menuitem id="menu_report_laundry_all"
+                  name="Wash Orders"
+                  action="em_laundry_management.action_order_report_all"
+                  parent="menu_laundry_report"
+        />
+    </data>
+</odoo>
