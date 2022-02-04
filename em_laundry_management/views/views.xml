@@ -288,6 +288,8 @@
             <field name="model">em.laundry.mgt.washings</field>
             <field name="arch" type="xml">
                 <search string="Washings">
+                    <field name="name" string="Name"/>
+                    <separator/>
                     <group expand="0" string="Group By">
                         <filter string="Orders" name="order" domain="[]" context="{'group_by': 'order_id'}"/>
                         <filter string="Status" name="status" domain="[]" context="{'group_by': 'washing_states'}"/>
