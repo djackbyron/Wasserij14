@@ -1,6 +1,6 @@
 {
     'name': "Online Reservation System",
-    'version': "1.0.2",
+    'version': "1.0.0 ",
     'author': "SMART",
     'category': "Tools",
     'summary': "Allow website users to book reservation from the website",
