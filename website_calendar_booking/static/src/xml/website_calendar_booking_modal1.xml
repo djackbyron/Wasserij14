@@ -1,0 +1,68 @@
+<templates id="template" xml:space="preserve">
+    <t t-name="website_calendar_booking.calendar_booking_modal">
+        <div class="modal fade" id="oe_website_calendar_modal">
+            <div class="modal-dialog modal-content">
+                <div class="modal-header alert alert-info mb0">
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">x</span>
+                    </button>
+                    <h4 class="modal-title">Confirm your Details</h4>
+<!--                    <span id="date_span"></span>-->
+                </div>
+                <div class="modal-body">
+                    <form method="GET" action="/book/calendar/create">
+                        <div class="form-group">
+                            <label for="name">Name*</label>
+                            <input name="name" type="text" class="form-control" required="1"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email*</label>
+                            <input name="email" type="email" class="form-control" required="1"/>
+                        </div>
+                         <div class="form-group">
+                            <label for="phone">Your Phone*</label>
+                            <input name="phone" type="text" class="form-control" required="1"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="pax">Your Pax*</label>
+                            <select name="Pax" class="form-control">
+                                <option class="form-control" t-att-value="1" ><t t-esc="1"/></option>
+                                <option class="form-control" t-att-value="2"><t t-esc="2"/></option>
+                                <option class="form-control" t-att-value="3"><t t-esc="3"/></option>
+                                <option class="form-control" t-att-value="4"><t t-esc="4"/></option>
+                                <option class="form-control" t-att-value="5"><t t-esc="5"/></option>
+                                <option class="form-control" t-att-value="6"><t t-esc="6"/></option>
+                                <option class="form-control" t-att-value="more"><span>More than 6</span></option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="date_span">Time</label>
+                            <input id="date_span" name="date_span" type="text" class="form-control" readonly="1"/>
+                        </div>
+                        <div class="form-group">
+                            <label for="type">Type*</label>
+                            <select name="Type" class="form-control">
+                                <option class="form-control" t-att-value="BreakFast">BreakFast</option>
+                                <option class="form-control" t-att-value="Lunch">Lunch</option>
+                                <option class="form-control" t-att-value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment">Special Occasions?</label>
+                            <textarea name="comment" class="form-control"/>
+                        </div>
+
+                        <input type="hidden" name="start" id="booking_form_start" />
+                        <input type="hidden" name="calendar_id" id="booking_form_calendar_id" />
+                        <input type="submit" class="btn btn-primary btn-lg" value="Confirm Appointment"/>
+                    </form>
+                </div>
+                <!--<div class="modal-footer">
+		    <button id="cancel" data-dismiss="modal" class="btn btn-primary">Cancel</button>
+		    <button id="submit_calendar_booking"  class="btn btn-danger">Submit</button>
+                </div>-->
+            </div>
+        </div>
+    </t>
+
+</templates>
