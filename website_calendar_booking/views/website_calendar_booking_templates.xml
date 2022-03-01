@@ -31,6 +31,7 @@
 <!--                    </div>-->
                 
 	            <input type="hidden" id="calendar_id" t-attf-value="#{calendar.id}"/>	            
+	            <input type="hidden" id="eating_type" t-attf-value="#{eating_type}"/>
 	            <input type="hidden" id="calendar_slot_duration" t-attf-value="#{calendar.booking_slot_duration}"/>
 	            <input type="hidden" id="calendar_min_time" t-attf-value="#{calendar.booking_min_time}"/>
 	            <input type="hidden" id="calendar_max_time" t-attf-value="#{calendar.booking_max_time}"/>	            

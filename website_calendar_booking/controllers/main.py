@@ -40,7 +40,17 @@ class WebsiteBookingController(http.Controller):
         start_date = start_date.strftime("%Y-%m-%d %H:%M:%S")
 
         calendar.booking_slot_duration
-        cal_event = request.env['calendar.event'].sudo().create({'user_id': calendar.user_id.id,'name': values['name'] + " (Booking)", 'start': start_date,'stop': stop_time, 'booking_email': values['email'], 'description': values['email'] + "\n" + values['comment'] })
+        cal_event = request.env['reservation.event'].sudo().create({'user_id': calendar.user_id.id,
+                                                                    'name': values['name'] + " (Booking)",
+                                                                    'start': start_date,
+                                                                    'stop': stop_time,
+                                                                    'phone':values['phone'],
+                                                                    'pax':values['Pax'],
+                                                                    'booking_email': values['email'],
+                                                                    'description': values['comment'],
+                                                                    'type':values['Type']
+                                                                    })
+        # cal_event = request.env['calendar.event'].sudo().create({'user_id': calendar.user_id.id,'name': values['name'] + " (Booking)", 'start': start_date,'stop': stop_time, 'booking_email': values['email'], 'description': values['email'] + "\n" + values['comment'] })
 
         return werkzeug.utils.redirect("/book/calendar/" + str(calendar.id) )
 
@@ -48,7 +58,40 @@ class WebsiteBookingController(http.Controller):
     def book_calendar(self, calendar, **kw):
         """Let's user see all aviable booking times and create bookings"""
         my_calendar = request.env['website.calendar'].sudo().browse( int(calendar) )
+        print("kw",kw)
+        print("context",request._context)
         return http.request.render('website_calendar_booking.website_calendar_booking_page', {'calendar': my_calendar})
+
+    @http.route('/book/breakfast/<calendar>', type="http", auth="public", website=True)
+    def book_breakfast(self, calendar, **kw):
+        """Let's user see all aviable booking times and create bookings"""
+        my_calendar = request.env['website.calendar'].sudo().browse(int(calendar))
+        print("kw", kw)
+        print("context", request._context)
+        return http.request.render('website_calendar_booking.website_calendar_booking_page', {'calendar': my_calendar,'eating_type':'breakfast'})
+
+    @http.route('/book/Lunch/<calendar>', type="http", auth="public", website=True)
+    def book_Lunch(self, calendar, **kw):
+        """Let's user see all aviable booking times and create bookings"""
+        my_calendar = request.env['website.calendar'].sudo().browse(int(calendar))
+        print("kw", kw)
+        print("context", request._context)
+        return http.request.render('website_calendar_booking.website_calendar_booking_page',
+                                   {'calendar': my_calendar, 'eating_type': 'Lunch'})
+
+    @http.route('/book/Dinner/<calendar>', type="http", auth="public", website=True)
+    def book_Dinner(self, calendar, **kw):
+        """Let's user see all aviable booking times and create bookings"""
+        my_calendar = request.env['website.calendar'].sudo().browse(int(calendar))
+        print("kw", kw)
+        print("context", request._context)
+        return http.request.render('website_calendar_booking.website_calendar_booking_page',
+                                   {'calendar': my_calendar, 'eating_type': 'Dinner'})
+
+    @http.route('/book/calendar', type="http", auth="public", website=True)
+    def home_reservation_calendar(self):
+        """Let's user see all aviable booking times and create bookings"""
+        return http.request.render('website_calendar_booking.home_reservation')
 
     @http.route('/book/calendar/timeframe/<calendar>', type="http", auth="public", website=True)
     def book_calendar_timeframe(self, calendar, **kw):
@@ -97,7 +140,8 @@ class WebsiteBookingController(http.Controller):
             values[field_name] = field_value
 
         return_string = ""
-        for event in request.env['calendar.event'].sudo().search([('user_id','=', int(user) )]):
+        # for event in request.env['calendar.event'].sudo().search([('user_id','=', int(user) )]):
+        for event in request.env['reservation.event'].sudo().search([('user_id','=', int(user) )]):
             return_string += '{'
             return_string += '"id": "' + str(event.id) + '",'
 

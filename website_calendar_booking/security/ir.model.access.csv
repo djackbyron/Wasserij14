@@ -3,3 +3,4 @@ access_website_calendar,access_website_calendar,model_website_calendar,base.grou
 access_website_calendar_timeframe,access_website_calendar_timeframe,model_website_calendar_timeframe,base.group_system,1,1,1,1
 access_website_calendar_public,access_website_calendar_public,model_website_calendar,,1,0,0,0
 access_website_calendar_timeframe_public,access_website_calendar_timeframe_public,model_website_calendar_timeframe,,1,0,0,0
+access_reservation_event,access_reservation_event,model_reservation_event,,1,1,1,1

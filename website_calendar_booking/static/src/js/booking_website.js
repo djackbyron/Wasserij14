@@ -68,6 +68,15 @@ $(document).ready(function() {
                    $('#date_span').val(date);
                    $('#booking_form_start').val(date);
                    $('#booking_form_calendar_id').val(calendarID);
+                   if ($("#eating_type").val() == "breakfast"){
+                       $('#Type').val("BreakFast");
+                   }
+                   else if ($("#eating_type").val() == "Lunch"){
+                       $('#Type').val("Lunch");
+                   }
+                   else{
+                    $('#Type').val("Dinner");
+                   }
 
                    self.$modal.find("#submit_calendar_booking").on('click', function () {
                        self.$modal.modal('hide');

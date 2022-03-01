@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <template id="home_reservation" name="Home">
+          <t t-call="website.layout">
+            <div id="wrap" class="oe_structure oe_empty">
+              <section class="s_parallax parallax s_parallax_is_fixed bg-black-50 o_half_screen_height o_colored_level" data-scroll-background-ratio="1" data-snippet="s_parallax" data-name="Parallax">
+                <span class="s_parallax_bg oe_img_bg" style="background-image: url('/web/image/website.s_parallax_default_image'); background-position: 50% 75%;"/>
+                <div class="o_we_bg_filter bg-black-50"/>
+                <div class="oe_structure oe_empty" data-editor-message="DRAG BUILDING BLOCKS HERE"/>
+              </section>
+              <section class="s_features pt32 pb32 o_colored_level" data-snippet="s_features" data-name="Features">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-lg-4 pt32 pb32 text-center o_colored_level">
+                      <a href="/book/breakfast/1">  <img src="/website_calendar_booking/static/src/img/icons8breakfast64.png"/></a>
+                      <h3 class="o_default_snippet_text">Breakfast</h3>
+<!--                      <p class="o_default_snippet_text">Tell what's the value for the <br/>customer for this feature.</p>-->
+                    </div>
+                    <div class="col-lg-4 pt32 pb32 text-center o_colored_level">
+                      <a href="/book/Lunch/1"><img src="/website_calendar_booking/static/src/img/lunch8.png"/></a>
+<!--                      <i class="fa fa-3x fa-photo rounded bg-o-color-5 m-3"/>-->
+                      <h3 class="o_default_snippet_text">Lunch</h3>
+<!--                      <p class="o_default_snippet_text">Write what the customer would like to know, <br/>not what you want to show.</p>-->
+                    </div>
+                    <div class="col-lg-4 pt32 pb32 text-center o_colored_level">
+<!--                      <i class="fa fa-3x fa-leaf rounded bg-secondary m-3"/>-->
+                      <a href="/book/Dinner/1"><img src="/website_calendar_booking/static/src/img/dinner64.png"/></a>
+                      <h3 class="o_default_snippet_text">Dinner</h3>
+<!--                      <p class="o_default_snippet_text">A small explanation of this great <br/>feature, in clear words.</p>-->
+                    </div>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </t>
+        </template>
+
+    </data>
+
+</odoo>
